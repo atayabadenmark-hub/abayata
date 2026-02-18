@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3D Racing Game</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: Arial;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="info">Use ← → Arrow Keys to Move</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    let renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Road
+    let roadGeometry = new THREE.BoxGeometry(10, 0.1, 200);
+    let roadMaterial = new THREE.MeshBasicMaterial({ color: 0x333333 });
+    let road = new THREE.Mesh(roadGeometry, roadMaterial);
+    road.position.z = -50;
+    scene.add(road);
+
+    // Car (Player)
+    let carGeometry = new THREE.BoxGeometry(1, 1, 2);
+    let carMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    let car = new THREE.Mesh(carGeometry, carMaterial);
+    car.position.y = 0.6;
+    scene.add(car);
+
+    // Camera Position
+    camera.position.z = 5;
+    camera.position.y = 3;
+    camera.rotation.x = -0.3;
+
+    let speed = 0.5;
+
+    // Controls
+    document.addEventListener("keydown", function(event) {
+        if(event.key === "ArrowLeft" && car.position.x > -4) {
+            car.position.x -= 0.5;
+        }
+        if(event.key === "ArrowRight" && car.position.x < 4) {
+            car.position.x += 0.5;
+        }
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // Move road for racing effect
+        road.position.z += speed;
+        if(road.position.z > 50){
+            road.position.z = -50;
+        }
+
+        renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Resize Fix
+    window.addEventListener('resize', function(){
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth/window.innerHeight;
+        camera.updateProjectionMatrix();
+    });
+
+</script>
+
+</body>
+</html>
